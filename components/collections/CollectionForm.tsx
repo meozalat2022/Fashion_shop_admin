@@ -1,5 +1,5 @@
 "use client";
-import React from "react";
+import React, { useState } from "react";
 import { Separator } from "../ui/separator";
 import { Button } from "@/components/ui/button";
 import {
@@ -17,6 +17,8 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { Textarea } from "../ui/textarea";
 import ImageUpload from "../custom ui/ImageUpload";
+import { useRouter } from "next/navigation";
+import toast from "react-hot-toast";
 
 const formSchema = z.object({
   title: z.string().min(2).max(20),
@@ -25,6 +27,8 @@ const formSchema = z.object({
 });
 
 const CollectionForm = () => {
+  const [loading, setLoading] = useState(false);
+  const router = useRouter();
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -35,7 +39,21 @@ const CollectionForm = () => {
   });
 
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
-    console.log(values);
+    try {
+      setLoading(true);
+      const res = await fetch("/api/collections", {
+        method: "POST",
+        body: JSON.stringify(values),
+      });
+      if (res.ok) {
+        setLoading(false);
+        toast.success("Collection Created");
+        router.push("/collections");
+      }
+    } catch (error) {
+      console.log("[collections_POST]", error);
+      toast.error("Something went wrong. Please try again");
+    }
   };
   return (
     <div className="p-10">
@@ -89,7 +107,18 @@ const CollectionForm = () => {
               </FormItem>
             )}
           />
-          <Button type="submit">Submit</Button>
+          <div className="flex gap-10">
+            <Button className="bg-blue-1 text-white" type="submit">
+              Submit
+            </Button>
+            <Button
+              className="bg-blue-1 text-white"
+              type="button"
+              onClick={() => router.push("/collections")}
+            >
+              Discard
+            </Button>
+          </div>
         </form>
       </Form>
     </div>
