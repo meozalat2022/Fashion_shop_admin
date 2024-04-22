@@ -33,3 +33,13 @@ export const POST = async(req: NextRequest)=>{
         return new NextResponse("Internal service error", {status: 500})
     }
 }
+
+export const GET = async(req: NextRequest)=>{
+    try {
+        await connectToDB()
+        const collections = await Collection.find().sort({createdAt:"desc"})
+        return NextResponse.json(collections,{status: 200})
+    } catch (error) {
+        console.log("[collections_GET]", error)
+    }
+}
