@@ -53,7 +53,7 @@ const Delete: React.FC<DeleteProps> = ({ id, item }) => {
             Are you absolutely sure?
           </AlertDialogTitle>
           <AlertDialogDescription>
-            This action cannot be undone. This will permanently delete your
+            This action cannot be undone. This will permanently delete your{" "}
             {item}
           </AlertDialogDescription>
         </AlertDialogHeader>
